@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">Labo 4</string>
-    <string name="welcome">Welcome to DAA!</string>
+
+    <string name="notes_list_title">My notes</string>
+
+    <string name="notes_controls_counter_empty">No notes</string>
+    <string name="notes_controls_counter">%d</string>
+    <string name="notes_controls_action_generate">Generate</string>
+    <string name="notes_controls_action_delete">Delete</string>
+
+    <string name="note_view_item_description_icon">Item icon</string>
+    <string name="note_view_item_description_schedule_icon">Schedule icon</string>
+
+    <string name="note_view_item_schedule_late">Late</string>
+    <string name="note_view_item_schedule_relative">%s</string>
 </resources>

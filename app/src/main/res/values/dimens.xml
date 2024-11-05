@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="title_size">16sp</dimen>
+    <dimen name="large_title_size">48sp</dimen>
+    <dimen name="element_margin">8dp</dimen>
+    <dimen name="list_padding">4dp</dimen>
+</resources>
