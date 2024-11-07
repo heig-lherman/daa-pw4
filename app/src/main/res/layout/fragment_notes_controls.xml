@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_centerInParent="true"
-    tools:context=".fragments.NotesControlsFragment">
+    tools:context=".fragment.NotesControlsFragment">
 
     <TextView
         android:id="@+id/notes_controls_counter"

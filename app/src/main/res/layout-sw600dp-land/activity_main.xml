@@ -8,7 +8,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_view_notes_list"
-        android:name="ch.heigvd.iict.daa.labo4.fragments.NotesListFragment"
+        android:name="ch.heigvd.iict.daa.labo4.fragment.NotesListFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -20,7 +20,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_view_notes_controls"
-        android:name="ch.heigvd.iict.daa.labo4.fragments.NotesControlsFragment"
+        android:name="ch.heigvd.iict.daa.labo4.fragment.NotesControlsFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
