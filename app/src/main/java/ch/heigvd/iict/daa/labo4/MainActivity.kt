@@ -8,6 +8,14 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import ch.heigvd.iict.daa.labo4.databinding.ActivityMainBinding
 
+/**
+ * Main activity for our application, it initializes the main view and viewmodel, as well as
+ * binding context options to the viewmodel actions.
+ *
+ * @author Emilie Bressoud
+ * @author Loïc Herman
+ * @author Sacha Butty
+ */
 class MainActivity : AppCompatActivity() {
 
     // Bindings to the activity content
