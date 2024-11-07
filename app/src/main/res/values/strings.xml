@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Labo 4</string>
 
@@ -5,7 +6,7 @@
 
     <string name="notes_controls_counter_empty">No notes</string>
     <string name="notes_controls_counter">%d</string>
-    <string name="notes_controls_action_generate">Generate</string>
+    <string name="notes_controls_action_generate">@string/action_generate</string>
     <string name="notes_controls_action_delete">Delete</string>
 
     <string name="note_view_item_description_icon">Item icon</string>
@@ -13,4 +14,13 @@
 
     <string name="note_view_item_schedule_late">Late</string>
     <string name="note_view_item_schedule_relative">%s</string>
+
+    <string name="menu_filter_group_title">Filter</string>
+    <string name="menu_filter_creation_date_title">Creation date</string>
+    <string name="menu_filter_eta_title">ETA</string>
+
+    <string name="menu_controls_action_generate">@string/action_generate</string>
+    <string name="menu_controls_action_delete_all">Delete all</string>
+
+    <string name="action_generate">Generate</string>
 </resources>

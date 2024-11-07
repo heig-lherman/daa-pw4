@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Filter options -->
+    <item
+        android:id="@+id/menu_filter_group"
+        android:title="@string/menu_filter_group_title"
+        android:icon="@drawable/sort"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/menu_filter_creation_date"
+                android:title="@string/menu_filter_creation_date_title" />
+            <item
+                android:id="@+id/menu_filter_eta"
+                android:title="@string/menu_filter_eta_title" />
+        </menu>
+    </item>
+
+    <!-- Actions -->
+    <item
+        android:id="@+id/menu_actions_generate"
+        android:title="@string/menu_controls_action_generate" />
+    <item
+        android:id="@+id/menu_actions_delete_all"
+        android:title="@string/menu_controls_action_delete_all" />
+</menu>
