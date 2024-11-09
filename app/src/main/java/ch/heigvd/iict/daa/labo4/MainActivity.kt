@@ -1,12 +1,13 @@
 package ch.heigvd.iict.daa.labo4
 
 import android.os.Bundle
-import android.view.ContextMenu
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import ch.heigvd.iict.daa.labo4.databinding.ActivityMainBinding
+import ch.heigvd.iict.daa.labo4.viewmodel.NoteViewModel
+import ch.heigvd.iict.daa.labo4.viewmodel.NoteViewModel.SortOrder
+import ch.heigvd.iict.daa.labo4.viewmodel.noteViewModel
 
 /**
  * Main activity for our application, it initializes the main view and viewmodel, as well as
@@ -21,6 +22,8 @@ class MainActivity : AppCompatActivity() {
     // Bindings to the activity content
     private lateinit var viewBinding: ActivityMainBinding
 
+    private val viewModel: NoteViewModel by noteViewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -34,7 +37,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // TODO
-        return super.onOptionsItemSelected(item)
+        when (item.itemId) {
+            R.id.menu_filter_creation_date -> viewModel.setSortOrder(SortOrder.BY_CREATION_DATE)
+            R.id.menu_filter_eta -> viewModel.setSortOrder(SortOrder.BY_ETA)
+            R.id.menu_actions_generate -> viewModel.generateNote()
+            R.id.menu_actions_delete_all -> viewModel.deleteAllNotes()
+            else -> return super.onOptionsItemSelected(item)
+        }
+
+        return true
     }
 }

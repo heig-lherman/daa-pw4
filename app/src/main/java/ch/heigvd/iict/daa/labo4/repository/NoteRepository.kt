@@ -54,7 +54,6 @@ class NoteRepository(
             noteDao.deleteAll()
         }
     }
-
 }
 
 /**
@@ -74,6 +73,7 @@ interface NoteDAO {
      * @return an observable list of notes and their schedules
      */
     @Query("SELECT * FROM note")
+    @Transaction
     fun findAll(): LiveData<List<NoteAndSchedule>>
 
     /**

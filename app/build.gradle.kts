@@ -31,6 +31,11 @@ android {
     buildFeatures {
         // Enable view bindings for simplifying calls to layout components
         viewBinding = true
+        dataBinding = true
+    }
+
+    ksp {
+        arg("room.schemaLocation", "$projectDir/schemas")
     }
 
     compileOptions {

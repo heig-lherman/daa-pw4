@@ -11,11 +11,10 @@ import ch.heigvd.iict.daa.labo4.model.Note
 import ch.heigvd.iict.daa.labo4.model.Schedule
 import ch.heigvd.iict.daa.labo4.repository.NoteDAO
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 /**
  * Room database definition for the notes application.
- * Singleton initialized by the application class ([NotesApplication]).
+ * Singleton initialized by the application class ([NotesApp]).
  *
  * @author Emilie Bressoud
  * @author Loïc Herman
@@ -49,23 +48,27 @@ abstract class NotesDatabase : RoomDatabase() {
                         "notes_database.db"
                     )
                     .fallbackToDestructiveMigration()
-                    .addCallback(databasePopulateCallback(scope))
+                    .addCallback(databasePopulateCallback)
                     .build()
                     .also { instance = it }
             }
         }
 
         // callback that will populate the database with some notes
-        private val databasePopulateCallback = { scope: CoroutineScope ->
-            object : Callback() {
-                override fun onCreate(db: SupportSQLiteDatabase) {
-                    instance?.let { database ->
-                        scope.launch {
-                            val dao = database.noteDao()
-                            for (i in 0..10) {
-                                dao.generateNote()
-                            }
-                        }
+        private val databasePopulateCallback = object : Callback() {
+            override fun onOpen(db: SupportSQLiteDatabase) {
+                super.onOpen(db)
+            }
+
+            override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
+                super.onDestructiveMigration(db)
+            }
+
+            override fun onCreate(db: SupportSQLiteDatabase) {
+                instance?.let { database ->
+                    val dao = database.noteDao()
+                    repeat(10) {
+                        dao.generateNote()
                     }
                 }
             }

@@ -3,7 +3,6 @@ package ch.heigvd.iict.daa.labo4
 import android.app.Application
 import ch.heigvd.iict.daa.labo4.repository.NoteRepository
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
 /**
@@ -14,12 +13,16 @@ import kotlinx.coroutines.SupervisorJob
  * @author Loïc Herman
  * @author Sacha Butty
  */
-class NotesApplication : Application() {
+class NotesApp : Application() {
 
     // Initialize the coroutine scope for database operations
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    private val scope = CoroutineScope(SupervisorJob())
 
     // Database singletons
-    val database by lazy { NotesDatabase.getInstance(this, scope) }
-    val noteRepository by lazy { NoteRepository(database.noteDao(), scope) }
+    val noteRepository by lazy {
+        NoteRepository(
+            NotesDatabase.getInstance(this, scope).noteDao(),
+            scope
+        )
+    }
 }
