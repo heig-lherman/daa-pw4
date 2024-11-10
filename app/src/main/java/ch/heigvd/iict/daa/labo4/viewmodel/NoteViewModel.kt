@@ -1,23 +1,15 @@
 package ch.heigvd.iict.daa.labo4.viewmodel
 
-import android.app.Application
 import android.content.Context
-import androidx.activity.ComponentActivity
-import androidx.activity.viewModels
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
-import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import ch.heigvd.iict.daa.labo4.NotesApp
 import ch.heigvd.iict.daa.labo4.lifecycle.SharedPreferencesEnumeratedLiveData
 import ch.heigvd.iict.daa.labo4.model.NoteAndSchedule
-import ch.heigvd.iict.daa.labo4.repository.NoteRepository
-import kotlin.reflect.KClass
 
 private const val NOTES_PREFS_CONTEXT_KEY = "notes_prefs"
 private const val NOTES_PREFS_KEY_SORT_ORDER = "sort_order"
@@ -26,20 +18,18 @@ private const val NOTES_PREFS_KEY_SORT_ORDER = "sort_order"
  * ViewModel for notes, it handles the business logic and the communication between the repository
  * and the UI fragments that have to reference them.
  *
- * @param repository the repository that provides the data
- * @param context the context of the application, used to access the shared preferences
+ * @param application the application, used to access the shared preferences and get the repository
  *
  * @author Emilie Bressoud
  * @author Loïc Herman
  * @author Sacha Butty
  */
-class NoteViewModel(
-    private val repository: NoteRepository,
-    application: Application
-) : AndroidViewModel(application) {
+class NoteViewModel(application: NotesApp) : AndroidViewModel(application) {
+
+    private val repository = application.noteRepository
 
     // Mutable data binding allowing to save [SortOrder] in the shared preferences
-    private val sortOrder = SharedPreferencesEnumeratedLiveData<SortOrder>(
+    private val sortOrder = SharedPreferencesEnumeratedLiveData(
         application.getSharedPreferences(NOTES_PREFS_CONTEXT_KEY, Context.MODE_PRIVATE),
         NOTES_PREFS_KEY_SORT_ORDER,
         SortOrder.NONE
@@ -60,7 +50,7 @@ class NoteViewModel(
      * @param sortOrder the sort order to set
      */
     fun setSortOrder(sortOrder: SortOrder) {
-        this.sortOrder.value = sortOrder
+        this.sortOrder.setValue(sortOrder)
     }
 
     /**
@@ -89,59 +79,18 @@ class NoteViewModel(
         }),
         NONE({ notes -> notes }),
     }
-}
 
-/**
- * Factory for the [NoteViewModel].
- *
- * @param repository the repository that provides the data
- *
- * @author Emilie Bressoud
- * @author Loïc Herman
- * @author Sacha Butty
- */
-class NoteViewModelFactory(
-    private val repository: NoteRepository,
-    private val application: Application
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(
-        modelClass: KClass<T>,
-        extras: CreationExtras
-    ): T {
-        if (modelClass.java.isAssignableFrom(NoteViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return NoteViewModel(repository, application) as T
-        }
+    companion object {
 
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}
-
-/**
- * Get a [NoteViewModel] for a [Fragment]. This abstracts away the call to define the factory and
- * fetching the context from the application.
- */
-inline fun Fragment.noteViewModel(
-    noinline ownerProducer: () -> ViewModelStoreOwner = { this },
-    noinline extrasProducer: (() -> CreationExtras)? = null,
-): Lazy<NoteViewModel> {
-    return viewModels<NoteViewModel>(ownerProducer, extrasProducer) {
-        (requireActivity().application as NotesApp).let {
-            NoteViewModelFactory(it.noteRepository, it)
-        }
-    }
-}
-
-/**
- * Get a [NoteViewModel] for a [ComponentActivity]. This abstracts away the call to define the
- * factory and fetching the context from the application.
- */
-inline fun ComponentActivity.noteViewModel(
-    noinline extrasProducer: (() -> CreationExtras)? = null,
-): Lazy<NoteViewModel> {
-    return viewModels<NoteViewModel>(extrasProducer) {
-        (application as NotesApp).let {
-            NoteViewModelFactory(it.noteRepository, it)
+        /**
+         * Factory for the [NoteViewModel].
+         *
+         * @author Emilie Bressoud
+         * @author Loïc Herman
+         * @author Sacha Butty
+         */
+        val Factory = viewModelFactory {
+            initializer { NoteViewModel(requireNotNull(this[APPLICATION_KEY]) as NotesApp) }
         }
     }
 }

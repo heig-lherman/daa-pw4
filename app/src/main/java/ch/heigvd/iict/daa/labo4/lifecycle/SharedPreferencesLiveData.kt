@@ -2,7 +2,6 @@ package ch.heigvd.iict.daa.labo4.lifecycle
 
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 
 /**
  * A mutable LiveData implementation that observes changes in a SharedPreferences object.
@@ -26,24 +25,20 @@ abstract class SharedPreferencesLiveData<T>(
     /**
      * Gets the value from the SharedPreferences object.
      *
-     * @param key the key of the value to get
-     * @param defaultValue the default value of the value to get
-     *
      * @return the value from the SharedPreferences object
      */
-    protected abstract fun getValueFromPreferences(key: String, defaultValue: T): T
+    protected abstract fun getValueFromPreferences(): T
 
     /**
      * Sets the value to the SharedPreferences object.
      *
-     * @param key the key of the value to set
      * @param value the value to set
      */
-    protected abstract fun setValueToPreferences(key: String, value: T)
+    protected abstract fun setValueToPreferences(value: T)
 
     final override fun onActive() {
         super.onActive()
-        value = getValueFromPreferences(key, defaultValue)
+        super.setValue(getValueFromPreferences())
         sharedPreferences.registerOnSharedPreferenceChangeListener(changeListener)
     }
 
@@ -52,13 +47,13 @@ abstract class SharedPreferencesLiveData<T>(
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(changeListener)
     }
 
-    public final override fun setValue(value: T?) {
-        setValueToPreferences(key, value!!)
+    public final override fun setValue(value: T) {
+        setValueToPreferences(value)
     }
 
     private val changeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         if (key == this.key) {
-            super.value = getValueFromPreferences(key, defaultValue)
+            super.setValue(getValueFromPreferences())
         }
     }
 }
@@ -83,11 +78,11 @@ class SharedPreferencesEnumeratedLiveData<T : Enum<T>>(
 
     private val enumClass = defaultValue::class.java
 
-    override fun getValueFromPreferences(key: String, defaultValue: T): T = sharedPreferences
+    override fun getValueFromPreferences(): T = sharedPreferences
         .getString(key, defaultValue.name)!!
         .let { enumClass.enumConstants!!.first { enum -> enum.name == it } }
 
-    override fun setValueToPreferences(key: String, value: T) = with(sharedPreferences.edit()) {
+    override fun setValueToPreferences(value: T) = with(sharedPreferences.edit()) {
         putString(key, value.name)
         apply()
     }

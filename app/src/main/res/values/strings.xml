@@ -22,25 +22,4 @@
     <string name="menu_controls_action_delete_all">Delete all</string>
 
     <string name="action_generate">Generate</string>
-
-    <plurals name="note_view_item_schedule_schedule_month">
-        <item quantity="one">%d month</item>
-        <item quantity="other">%d months</item>
-    </plurals>
-    <plurals name="note_view_item_schedule_schedule_week">
-        <item quantity="one">%d week</item>
-        <item quantity="other">%d weeks</item>
-    </plurals>
-    <plurals name="note_view_item_schedule_schedule_day">
-        <item quantity="one">%d day</item>
-        <item quantity="other">%d days</item>
-    </plurals>
-    <plurals name="note_view_item_schedule_schedule_hour">
-        <item quantity="one">%d hour</item>
-        <item quantity="other">%d hours</item>
-    </plurals>
-    <plurals name="note_view_item_schedule_schedule_minute">
-        <item quantity="one">%d minute</item>
-        <item quantity="other">%d minutes</item>
-    </plurals>
 </resources>

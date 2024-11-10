@@ -11,6 +11,7 @@ import ch.heigvd.iict.daa.labo4.model.Note
 import ch.heigvd.iict.daa.labo4.model.Schedule
 import ch.heigvd.iict.daa.labo4.repository.NoteDAO
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 /**
  * Room database definition for the notes application.
@@ -48,28 +49,18 @@ abstract class NotesDatabase : RoomDatabase() {
                         "notes_database.db"
                     )
                     .fallbackToDestructiveMigration()
-                    .addCallback(databasePopulateCallback)
+                    .addCallback(databasePopulateCallback(scope))
                     .build()
                     .also { instance = it }
             }
         }
 
         // callback that will populate the database with some notes
-        private val databasePopulateCallback = object : Callback() {
-            override fun onOpen(db: SupportSQLiteDatabase) {
-                super.onOpen(db)
-            }
-
-            override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
-                super.onDestructiveMigration(db)
-            }
-
+        private fun databasePopulateCallback(scope: CoroutineScope) = object : Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
                 instance?.let { database ->
                     val dao = database.noteDao()
-                    repeat(10) {
-                        dao.generateNote()
-                    }
+                    scope.launch { repeat(10) { dao.generateNote() } }
                 }
             }
         }

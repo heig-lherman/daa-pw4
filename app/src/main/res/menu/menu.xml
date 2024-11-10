@@ -7,7 +7,7 @@
         android:id="@+id/menu_filter_group"
         android:title="@string/menu_filter_group_title"
         android:icon="@drawable/sort"
-        app:showAsAction="ifRoom">
+        app:showAsAction="ifRoom|withText">
         <menu>
             <item
                 android:id="@+id/menu_filter_creation_date"

@@ -18,11 +18,7 @@ class NotesApp : Application() {
     // Initialize the coroutine scope for database operations
     private val scope = CoroutineScope(SupervisorJob())
 
-    // Database singletons
-    val noteRepository by lazy {
-        NoteRepository(
-            NotesDatabase.getInstance(this, scope).noteDao(),
-            scope
-        )
-    }
+    // Database lazy-init singletons
+    val database by lazy { NotesDatabase.getInstance(this, scope).noteDao() }
+    val noteRepository by lazy { NoteRepository(database, scope) }
 }

@@ -3,14 +3,15 @@ package ch.heigvd.iict.daa.labo4.fragment
 import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import ch.heigvd.iict.daa.labo4.R
@@ -21,9 +22,7 @@ import ch.heigvd.iict.daa.labo4.model.NoteAndSchedule
 import ch.heigvd.iict.daa.labo4.model.State
 import ch.heigvd.iict.daa.labo4.model.Type
 import ch.heigvd.iict.daa.labo4.viewmodel.NoteViewModel
-import ch.heigvd.iict.daa.labo4.viewmodel.noteViewModel
 import java.util.Calendar
-import java.util.concurrent.TimeUnit
 
 /**
  * Fragment that displays the notes using a recycler, the adapter of which is provided by the
@@ -38,14 +37,14 @@ class NotesListFragment : Fragment() {
     // Bindings to the fragment content
     private lateinit var viewBinding: FragmentNotesListBinding
 
-    private val viewModel: NoteViewModel by noteViewModel()
+    private val viewModel: NoteViewModel by activityViewModels { NoteViewModel.Factory }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        viewBinding = FragmentNotesListBinding.inflate(layoutInflater)
+    ): View {
+        viewBinding = FragmentNotesListBinding.inflate(layoutInflater, container, false)
         return viewBinding.root
     }
 
@@ -54,10 +53,7 @@ class NotesListFragment : Fragment() {
 
         // Initialize the recycler view with its adapter
         val adapter = NotesRecyclerAdapter(viewModel.sortedNotes.value ?: emptyList())
-        viewBinding.notesListRecycler.apply {
-            this.adapter = adapter
-            layoutManager = LinearLayoutManager(context)
-        }
+        viewBinding.notesListRecycler.adapter = adapter
 
         // Observe the notes and update the adapter
         viewModel.sortedNotes.observe(viewLifecycleOwner) {
@@ -177,6 +173,7 @@ private class NotesRecyclerAdapter(
 
                     val (scheduleText, late) = computeDateDiff(
                         listItemTextScheduleText.context,
+                        state,
                         note.schedule!!.date
                     )
 
@@ -201,7 +198,7 @@ private class NotesRecyclerAdapter(
 
         private fun getStateTint(context: Context, state: State): ColorStateList? {
             return when (state) {
-                State.IN_PROGRESS -> ContextCompat.getColorStateList(context, R.color.grey)
+                State.IN_PROGRESS -> ContextCompat.getColorStateList(context, R.color.gray)
                 State.DONE -> ContextCompat.getColorStateList(context, R.color.green)
             }
         }
@@ -210,76 +207,28 @@ private class NotesRecyclerAdapter(
             return if (late) {
                 ContextCompat.getColorStateList(context, R.color.red)
             } else {
-                ContextCompat.getColorStateList(context, R.color.green)
+                ContextCompat.getColorStateList(context, R.color.gray)
             }
         }
 
-        private fun computeDateDiff(context: Context, date: Calendar): Pair<String, Boolean> {
+        private fun computeDateDiff(
+            context: Context,
+            state: State,
+            date: Calendar
+        ): Pair<CharSequence, Boolean> {
             val now = Calendar.getInstance()
-            val diff = date.timeInMillis - now.timeInMillis
-
-            if (diff < 0) {
+            if (date.before(now) && state != State.DONE) {
                 return Pair(context.getString(R.string.note_view_item_schedule_late), true)
             }
 
-            val diffMinutes = TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS)
-            val diffHours = TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS)
-            val diffDays = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)
-
-            val diffWeeks = diffDays / 7
-            val diffMonths = diffDays / now.getActualMaximum(Calendar.DAY_OF_MONTH)
-
-            return when {
-                diffMinutes > 0 -> Pair(
-                    context.resources.getQuantityString(
-                        R.plurals.note_view_item_schedule_schedule_minute,
-                        diffMinutes.toInt(),
-                        diffMinutes
-                    ),
-                    false
-                )
-
-                diffHours > 0 -> Pair(
-                    context.resources.getQuantityString(
-                        R.plurals.note_view_item_schedule_schedule_hour,
-                        diffHours.toInt(),
-                        diffHours
-                    ),
-                    false
-                )
-
-                diffDays > 0 -> Pair(
-                    context.resources.getQuantityString(
-                        R.plurals.note_view_item_schedule_schedule_day,
-                        diffDays.toInt(),
-                        diffDays
-                    ),
-                    false
-                )
-
-                diffWeeks > 0 -> Pair(
-                    context.resources.getQuantityString(
-                        R.plurals.note_view_item_schedule_schedule_week,
-                        diffWeeks.toInt(),
-                        diffWeeks
-                    ),
-                    false
-                )
-
-                diffMonths > 0 -> Pair(
-                    context.resources.getQuantityString(
-                        R.plurals.note_view_item_schedule_schedule_month,
-                        diffMonths.toInt(),
-                        diffMonths
-                    ),
-                    false
-                )
-
-                else -> Pair(
-                    context.getString(R.string.note_view_item_schedule_late),
-                    false
-                )
-            }
+            return Pair(
+                DateUtils.getRelativeTimeSpanString(
+                    date.timeInMillis,
+                    now.timeInMillis,
+                    DateUtils.MINUTE_IN_MILLIS
+                ),
+                false
+            )
         }
     }
 

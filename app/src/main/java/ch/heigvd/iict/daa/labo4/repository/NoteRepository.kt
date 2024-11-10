@@ -51,7 +51,8 @@ class NoteRepository(
      */
     fun deleteNotes() {
         applicationScope.launch {
-            noteDao.deleteAll()
+            noteDao.deleteNotes()
+            noteDao.deleteSchedules()
         }
     }
 }
@@ -75,12 +76,6 @@ interface NoteDAO {
     @Query("SELECT * FROM note")
     @Transaction
     fun findAll(): LiveData<List<NoteAndSchedule>>
-
-    /**
-     * Deletes all notes and their schedules.
-     */
-    @Query("DELETE FROM note")
-    fun deleteAll()
 
     /**
      * Get the number of notes.
@@ -107,6 +102,19 @@ interface NoteDAO {
      */
     @Insert
     fun insert(schedule: Schedule): Long
+
+    /**
+     * Deletes all notes.
+     */
+    @Query("DELETE FROM note")
+    fun deleteNotes()
+
+    /**
+     * Deletes all schedules. Note: there are no foreign keys,
+     * it is recommended to delete notes first.
+     */
+    @Query("DELETE FROM schedule")
+    fun deleteSchedules()
 
     /**
      * Generate a random note and schedule, and insert it.

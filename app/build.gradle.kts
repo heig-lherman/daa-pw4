@@ -31,7 +31,6 @@ android {
     buildFeatures {
         // Enable view bindings for simplifying calls to layout components
         viewBinding = true
-        dataBinding = true
     }
 
     ksp {
@@ -55,9 +54,10 @@ dependencies {
     implementation(libs.material)
 
     // Room
-    implementation(libs.room.runtime)
     implementation(libs.room.ktx)
+    implementation(libs.room.runtime)
     ksp(libs.room.compiler)
+    annotationProcessor(libs.room.compiler)
 
     // Lifecycle components
     implementation(libs.androidx.lifecycle.viewmodel.ktx)

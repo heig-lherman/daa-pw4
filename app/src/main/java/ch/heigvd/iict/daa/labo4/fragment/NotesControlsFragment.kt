@@ -5,11 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import ch.heigvd.iict.daa.labo4.R
 import ch.heigvd.iict.daa.labo4.databinding.FragmentNotesControlsBinding
 import ch.heigvd.iict.daa.labo4.viewmodel.NoteViewModel
-import ch.heigvd.iict.daa.labo4.viewmodel.noteViewModel
-import kotlin.getValue
 
 /**
  * Fragment that displays the controls for the notes, allowing to generate and delete notes.
@@ -23,14 +22,14 @@ class NotesControlsFragment : Fragment() {
     // Bindings to the fragment content
     private lateinit var viewBinding: FragmentNotesControlsBinding
 
-    private val viewModel: NoteViewModel by noteViewModel()
+    private val viewModel: NoteViewModel by activityViewModels { NoteViewModel.Factory }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        viewBinding = FragmentNotesControlsBinding.inflate(layoutInflater)
+    ): View {
+        viewBinding = FragmentNotesControlsBinding.inflate(layoutInflater, container, false)
         return viewBinding.root
     }
 
