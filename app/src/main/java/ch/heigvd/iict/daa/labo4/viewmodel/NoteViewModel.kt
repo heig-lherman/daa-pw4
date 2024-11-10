@@ -42,7 +42,7 @@ class NoteViewModel(application: NotesApp) : AndroidViewModel(application) {
     val noteCount = repository.noteCount
 
     /** Reference to the observable note list sorted by the saved sort order */
-    val sortedNotes = sortOrder.switchMap { allNotes.map { notes -> it.sorter(notes) } }
+    val sortedNotes = sortOrder.switchMap { sort -> allNotes.map { notes -> sort.sorter(notes) } }
 
     /**
      * Set the sort order for the notes.

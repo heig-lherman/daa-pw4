@@ -4,7 +4,7 @@
 #let project(title: "", authors: (), date: none, body) = {
   // Set the document's basic properties.
   set document(author: authors, title: title)
-  set page(numbering: "1", number-align: center)
+  set page(numbering: "1", number-align: center, margin: (x: 1.5cm, y: 2cm))
   set text(font: "New Computer Modern", lang: "fr", size: 10pt)
   //set heading(numbering: "1.1")
   show math.equation: set text(weight: 400)
