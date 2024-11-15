@@ -9,6 +9,10 @@
   date: "November 25, 2024",
 ) 
 
+/* 
+Veuillez répondre aux 3 questions suivantes. Pour chacune d’entre elles, vous développerez votre
+réponse et l’illustrerez par des extraits de code. */
+
 = Réponses aux questions
 
 == Question 6.1
@@ -242,13 +246,31 @@ Une fois que l'utilisateur aura terminé l'édition de la note, il pourra appuye
 
 Certaines modifications seront nécessaire dans le viewmodel tout comme le repository et le DAO pour permettre de mettre à jour une note existante dans la base de données Room avec les nouvelles valeurs.
 
-= Détails d'implémentation
 
-== Activités et fragments
+= Choix d'implémentation
 
-== Base de données Room
+=== Titre et contenu des notes avec horaire
 
-== ViewModel et intégration avec les fragments
+Pour éviter que le texte du titre et du contenu d'une note déborde sur l'icône et le texte de l'horaire, nous avons ajouté une contrainte de largeur à ces deux éléments et activé le mode `ellipsize` pour que le texte soit tronqué s'il dépasse trop.
 
-== RecyclerView pour la liste de notes
+=== Affichage de la deadline
 
+Pour nous simplifier la vie, nous utilisons `DateUtils.getRelativeTimeSpanString` pour obtenir le texte d'affichage de la date qui sera automatiquement traduit selon la locale du système. Cet affichage diffère légèrement de celui indiqué en donnée car il affichera la date jusqu'à ce qu'elle soit à moins d'une semaine où un format relatif sera utilisé.
+
+=== Mode tablette paysage
+
+La densité de pixels d'une tablette est définie comme ayant la largeur la plus courte à `600dp`, nous utilisons donc le sélecteur `sw600dp` pour la version du layout des tablettes. Le layout avec les actions s'applique aussi uniquement aux tablettes en mode paysage, via le sélecteur `land`.
+
+Ces layouts utilisent des fragments qui contiennent le contenu donc le rajout de dispositions peut être fait facilement.
+
+=== Initialisation de la base de données Room
+
+Avec notre définition spécifique de `Application`, nous instancions via l'extension Kotlin `lazy` une instance de `NotesDatabase` qui est la base de données Room via le pattern singleton. Le créateur de l'instance va également enregistrer un `Callback` avec la méthode `onCreate` qui s'assurera de remplir la base de données lors de la première création avec 10 notes aléatoires. (Cette création ne se fait qu'une seule fois, pour relancer la création il faut supprimer le fichier SQLite via l'option clear storage de Android)
+
+La base de donnée comntient la référence vers le DAO et notre instance d'Application va utiliser ces deux objets pour initialiser le repository de notes en donnant à tous un scope pour les coroutines Kotlin qui sera utilisé pour les opérations sur la base de données.
+
+=== Diffing asynchrone des notes pour le recycler
+
+Pour permettre la gestion de l'affichage des notes dans la `RecyclerView` de façon plus fluide, nous avons utilisé un `AsyncListDiffer` avec un `NoteDiffCallback` qui fait emploi de l'égalité entre data class fournie par Kotlin. `AsyncListDiffer` décharge le travail de comparaison des notes à un thread exécuté en background permettant ainsi de ne modifier que les vues qui ont été modifiées lors de la réception d'une mise à jour de la part de la base de données.
+
+Cela permet aussi de mieux prendre en charge le cas où il y aurait une grande quantité de données en base et que l'utilisation de `Flow` avec des paramètres de backpressure ajustés ne puisse pas être considérée.
